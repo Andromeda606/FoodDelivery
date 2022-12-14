@@ -13,4 +13,4 @@ add_executable(
         include/callback.h
         include/database.h
         include/database.c
-        )
+        include/helper.c)

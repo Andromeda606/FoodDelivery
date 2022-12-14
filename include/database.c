@@ -2,7 +2,6 @@
 #include "sqlite3.c"
 #include "callback.h"
 #include "database.h"
-
 #define TEST    1
 
 
@@ -42,4 +41,3 @@ void get_desks() {
     printf("%c", sqlite3_exec(db, "SELECT * FROM desk_data;", callback,  (void*)data, &err_msg));
     printf("%s\n", sqlite3_column_text(res, 0));
 }
-
