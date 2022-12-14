@@ -6,7 +6,7 @@ int main() {
     setlocale(LC_ALL, "Turkish");
     printf("Restoran Giriş Sistemi\n");
     init();
-
+    //dasdsadsad
 
     //get_desks();
     print_desk("1");
