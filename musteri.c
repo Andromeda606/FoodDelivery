@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <locale.h>
 
-int main() {
+int main(){
     setlocale(LC_ALL, "Turkish");
     printf("Restoran Kayıt Sistemi\n");
     init();
