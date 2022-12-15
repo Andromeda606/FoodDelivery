@@ -4,10 +4,9 @@
 
 int main(){
     setlocale(LC_ALL, "Turkish");
-    printf("Restoran Kayıt Sistemi\n");
+    printf("Restoran Kayıt Sistemi - Müşteri\n");
     init();
-    //get_desks();
-    print_desk("1");
+
 
     return 0;
 }

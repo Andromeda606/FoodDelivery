@@ -1,5 +1,5 @@
 //
-// Created by ramoi on 14.12.2022.
+// Created by ramazan akbal on 14.12.2022.
 //
 
 #ifndef RESTORANTAKIP_CALLBACK_H
