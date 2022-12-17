@@ -36,13 +36,12 @@ void print_desk(char desk_id[]) {
 
 void get_desks() {
     const char* data = "Callback function called";
-    printf("%c", sqlite3_exec(db, "SELECT * FROM desk_data;", callback,  (void*)data, &err_msg));
+    printf("%c", sqlite3_exec(db, "SELECT * FROM desk_data;", callback_all_desk,  (void*)data, &err_msg));
     printf("%s\n", sqlite3_column_text(res, 0));
 }
 
 int login(char username[], char password[]){
     char *sql = "SELECT id FROM users WHERE username = ? and password = ?;";
-
     int rc = sqlite3_prepare_v2(db, sql, -1, &res, 0);
 
     if (rc == SQLITE_OK) {
