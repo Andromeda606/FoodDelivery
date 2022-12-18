@@ -1,9 +1,8 @@
 #include "database.h"
 #include <stdio.h>
 #include <locale.h>
-#include <stdlib.h>
 
-int main() {
+int main(){
     setlocale(LC_ALL, "Turkish");
     printf("Restoran Kayıt Sistemi - Müşteri\n");
     init();

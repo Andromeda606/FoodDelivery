@@ -12,6 +12,13 @@
 - Ürünler tamamlanınca siparişleri restorana ileticek
 - Sepetten sonra kendisi iptal edecek
 
+### Durum Kodları
+```
+0 = Sipariş verildi, onay bekleniliyor
+1 = Sipariş onaylandı, hazırlanıyor
+2 = Sipariş hazırlandı, getiriliyor
+3 = Sipariş getirildi, afiyet olsun! başka bir şey ister misiniz?
+```
 
 ## Gözükecek Menü
 ```
@@ -29,9 +36,9 @@ Lahmacun
 
 Pide
 ----------------------------
-[4] Lahmacun           22 TL
-[5] Fındık Lahmacun    12 TL
-[6] Özel Lahmacun      30 TL
+[4] Şefin Pidesi       40 TL
+[5] Kuşbaşı Pide       15 TL
+[6] Kıymalı Pide       20 TL
 ----------------------------
 
 Çorba

@@ -6,4 +6,5 @@
 #define RESTORANTAKIP_CALLBACK_H
 int callback_desk(void *NotUsed, int argc, char **argv, char **azColName);
 int callback_all_desk(void *NotUsed, int argc, char **argv, char **azColName);
+int callback_menu(void *NotUsed, int argc, char **argv, char **azColName);
 #endif //RESTORANTAKIP_CALLBACK_H
