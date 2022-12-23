@@ -1,15 +1,17 @@
-cmake_minimum_required(VERSION 3.23)
+cmake_minimum_required(VERSION 3.22)
 project(Restoran)
 project(Musteri)
 project(LibraryTest)
 
 set(CMAKE_CXX_STANDARD 14)
 
-include_directories(sqlite)
 include_directories(include)
 include_directories(include/app)
 include_directories(include/system)
-
+#include_directories(/usr/lib/x86_64-linux-gnu/)
+#link_libraries(/usr/lib/x86_64-linux-gnu/)
+#link_directories(/usr/lib/x86_64-linux-gnu)
+find_library (libsqlite3.so SHARED)
 add_executable(
         Restoran
         restoran.c
@@ -40,5 +42,12 @@ add_executable(
         include/database.c
         include/helper.c
         include/app/menu.c
-
         include/app/mode.c include/app/mode.h)
+
+
+target_link_libraries(LibraryTest sqlite3)
+target_link_libraries(LibraryTest ncurses)
+target_link_libraries(Musteri sqlite3)
+target_link_libraries(Musteri ncurses)
+target_link_libraries(Restoran sqlite3)
+target_link_libraries(Restoran ncurses)

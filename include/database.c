@@ -1,10 +1,15 @@
 #include <stdio.h>
-#include "sqlite3.c"
+
+#define _GNU_SOURCE
+
+#include "sqlite3.h"
 #include "callback.h"
 #include "database.h"
-#include <conio.h>
 #include <helper.h>
 #include "menu.h"
+#include <ncurses.h>
+#include <string.h>
+#include <locale.h>
 
 sqlite3 *db;
 sqlite3_stmt *res;
@@ -84,6 +89,10 @@ void show_menu(int desk_id) {
     }
 
     struct Food card[50];
+    initscr();
+    start_color();
+    init_pair(1, COLOR_WHITE, COLOR_GREEN);
+    init_pair(2, COLOR_WHITE, COLOR_CYAN);
     draw_menu(foods, card, 0, 0, el, desk_id);
 }
 
@@ -103,37 +112,38 @@ void buy_products(int desk_id, struct Card *cards) {
 
     }
     sqlite3_exec(db, sql, 0, 0, 0);
-    printf("\n");
-
-
+    clear_screen();
+    endwin();
 }
 
 static void sync_card(struct Food *foods, struct Card *card, int selected_line, int card_length, int el, int desk_id) {
-    printf("Sepetinizin içeriği, onaylıyor musunuz?\n");
-    printf("=============================================\n");
+    printw("Sepetinizin içeriği, onaylıyor musunuz?\n");
+    printw("=============================================\n");
     int plussing = 0;
-    printf("%4s %30s\t%4s\n", "Adet", "Adı", "Fiyat");
+    printw("%4s %30s\t%4s\n", "Adet", "Adı", "Fiyat");
     for (int i = 0; i < 20; i++) {
         struct Card food = card[i];
         if (food.defined != 1) {
             break;
         }
-        printf("%4d %30s\t%4d\n", food.quantity, food.name, food.price);
+        printw("%4d %30s\t%4d\n", food.quantity, food.name, food.price);
         plussing += food.price;
     }
-    printf("=============================================\n");
-    printf("TUTAR: %d TL\n", plussing);
-    printf("=============================================\n");
-    printf("Onaylamak için e, bir önceki menüye dönmek için ise için ise h tuşuna basınız");
+    printw("=============================================\n");
+    printw("TUTAR: %d TL\n", plussing);
+    printw("=============================================\n");
+    printw("Onaylamak için e, bir önceki menüye dönmek için ise için ise h tuşuna basınız");
     while (1) {
-        int keyboard = getch();
+        int keyboard = getcha();
+        printw("%d\n", keyboard);
         if (keyboard == 101) { // e
             // Başlat
             buy_products(desk_id, card);
-            printf("Siparişiniz başarıyla alınmıştır. Lütfen siparişinizi bekleyiniz.\n");
+            printw("Siparişiniz başarıyla alınmıştır. Lütfen siparişinizi bekleyiniz.\n");
             return;
         } else if (keyboard == 104) { // h
             draw_menu(foods, card, selected_line, card_length, el, desk_id);
+            break;
         }
     }
 
@@ -168,53 +178,82 @@ struct Tuple update_card(struct Card *card, int card_length, int m_food_id, int 
 }
 
 static void draw_menu(struct Food *foods, struct Card *card, int line, int card_length, int el, int desk_id) {
+    int keyboard = 0;
+
+
+    /* init_pair(1, COLOR_RED, COLOR_GREEN);
+   setlocale(LC_ALL, "tr-TR");
+    start_color();
+
+    init_pair(1, COLOR_RED, COLOR_GREEN);
+    attron(COLOR_PAIR(1));
+    printw("Red text + Green back\n");
+    attroff(COLOR_PAIR(1));
+
+    init_pair(2, COLOR_GREEN, COLOR_WHITE); // changed id of pair
+    attron(COLOR_PAIR(2));
+    printw("Green text + white back\n");
+    attroff(COLOR_PAIR(2));
+
+    refresh();*/
     while (1) {
-        system("cls");
+        clear_screen();
+        printw("%d\n", keyboard);
         // Draw header
-        printf("Menüde İstediğiniz Yemeği Seçiniz.\n");
-        printf("Sepetinizde Bulunan Ürün Sayısı: "ANSI_COLOR_CYAN "%d" ANSI_COLOR_RESET "\n", card_length);
+        printw("Menüde İstediğiniz Yemeği Seçiniz.\n");
+        printw("Sepetinizde Bulunan Ürün Sayısı: ");
+        attron(COLOR_PAIR(2));
+        printw("%d", card_length);
+        attroff(COLOR_PAIR(2));
+        printw("\n");
 
         // Draw foods
-        printf("================================================================\n");
-        printf("%4s\t%4s\t%5s\t%4s\n", "id", "Kategori", "Adı", "Fiyatı");
+        printw("================================================================\n");
+        printw("%4s\t%4s\t%5s\t%4s\n", "id", "Kategori", "Adı", "Fiyatı");
         for (int i = 0; i < el; i++) {
             struct Food food = foods[i];
             if (line == i) {
-                printf(ANSI_COLOR_GREEN);
+                attron(COLOR_PAIR(1));
             }
-            printf("%4d\t%4d\t%15s\t%4d\n", food.id, food.category, food.name, food.price);
+            printw("%4d\t%4d\t%15s\t%4d\n", food.id, food.category, food.name, food.price);
             if (line == i) {
-                printf(ANSI_COLOR_RESET);
+                attroff(COLOR_PAIR(1));
             }
         }
 
-        printf("================================================================\n");
+        printw("================================================================\n");
         // Draw footer
-        printf("Çıkış yapmak için \"e\", ürün seçmek için \"Enter\" tuşuna basınız.\n");
+        printw("Çıkış yapmak için \"e\", ürün seçmek için \"Enter\" tuşuna basınız.\n");
         // Keyboard Control
-        int keyboard = getch();
-        system("cls");
-        printf("%d\n", keyboard);
+        keyboard = getcha();
+
+        //initscr();
+
+        printw("%d\n", keyboard);
         struct Tuple r;
         switch (keyboard) {
-            case 72: // Up arrow
+            case 65: // Up arrow
                 if (line != 0) {
                     line--;
                 }
+                keyboard = 0;
                 break;
-            case 80: // down arrow
+            case 66: // down arrow
                 if (line != el - 1) {
                     line++;
                 }
+                keyboard = 0;
                 break;
-            case 13: // Enter
+            case 10: // Enter
                 r = update_card(card, card_length, foods[line].id, foods[line].price, foods[line].name);
                 card = r.card;
                 card_length = r.card_length;
+                keyboard = 0;
                 break;
             case 101: // "e"
-                system("cls");
+                clear_screen();
                 sync_card(foods, card, line, card_length, el, desk_id);
+                keyboard = 0;
                 return;
             default:
                 break;
@@ -222,7 +261,7 @@ static void draw_menu(struct Food *foods, struct Card *card, int line, int card_
     }
 }
 
-struct DeskData *get_desk_data(int desk_id){
+struct DeskData *get_desk_data(int desk_id) {
     struct DeskData *desks;
     char *sql = "SELECT status, type_id, quantity, title FROM desk_data WHERE desk_id = ? LIMIT 1;";
     int rc = sqlite3_prepare_v2(db, sql, -1, &res, 0);

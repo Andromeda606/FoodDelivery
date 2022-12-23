@@ -19,5 +19,9 @@
 #define YELLOW(string) ANSI_COLOR_YELLOW string ANSI_COLOR_RESET
 #define GREEN(string) ANSI_COLOR_GREEN string ANSI_COLOR_RESET
 
+void clear_screen();
+int getcha();
+
+
 
 #endif //MUSTERI_HELPER_H
