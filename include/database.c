@@ -10,6 +10,8 @@
 #include <ncurses.h>
 #include <string.h>
 #include <locale.h>
+#include <unistd.h>
+#include <stdlib.h>
 
 sqlite3 *db;
 sqlite3_stmt *res;
@@ -20,7 +22,7 @@ void init() {
     if (TEST) {
         strcpy(path, "../restoran.db");
     }
-    sqlite3_open_v2(path, &db, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE, NULL);
+    sqlite3_open_v2(path, &db, SQLITE_OPEN_READWRITE, NULL);
 }
 
 //DESK ALGORITHM
@@ -69,31 +71,60 @@ struct Card {
 
 } Card;
 
+struct Category {
+    int id;
+    char text[20];
+} Category;
+
 struct DeskData {
     int status, type_id, quantity, defined;
     char name[20];
 } DeskData;
 
 void show_menu(int desk_id) {
-    sqlite3_prepare_v2(db, "SELECT * FROM menu;", -1, &res, 0);
+    struct Food card[50];
+    struct Category categories[10];
     struct Food foods[20];
-    int el;
-    for (el = 0; sqlite3_step(res) != SQLITE_DONE; el++) {
+
+    sqlite3_prepare_v2(db, "SELECT id,name,price,category FROM menu;", -1, &res, 0);
+
+    int i;
+    for (i = 0; sqlite3_step(res) != SQLITE_DONE; i++) {
         struct Food food;
         food.id = sqlite3_column_int(res, 0);
         memcpy(food.name, sqlite3_column_text(res, 1), 20);
         food.price = sqlite3_column_int(res, 2);
         food.category = sqlite3_column_int(res, 3);
         food.defined = 1;
-        foods[el] = food;
+        foods[i] = food;
     }
 
-    struct Food card[50];
+
+    //added category
+    sqlite3_prepare_v2(db, "SELECT id, text FROM category;", -1, &res, 0);
+
+    for (int j = 0; sqlite3_step(res) != SQLITE_DONE; j++) {
+        struct Category category;
+        category.id = sqlite3_column_int(res, 0);
+        memcpy(category.text, sqlite3_column_text(res, 1), 20);
+        categories[category.id] = category;
+    }
+
+
     initscr();
+
     start_color();
-    init_pair(1, COLOR_WHITE, COLOR_GREEN);
-    init_pair(2, COLOR_WHITE, COLOR_CYAN);
-    draw_menu(foods, card, 0, 0, el, desk_id);
+
+    init_pair(1, COLOR_GREEN, COLOR_BLACK);
+    init_pair(2, COLOR_GREEN, COLOR_BLACK);
+    init_pair(3, COLOR_CYAN, COLOR_BLACK);
+    draw_menu(foods,
+              card,
+              0,
+              0,
+              i,
+              desk_id,
+              categories);
 }
 
 void buy_products(int desk_id, struct Card *cards) {
@@ -116,18 +147,19 @@ void buy_products(int desk_id, struct Card *cards) {
     endwin();
 }
 
-static void sync_card(struct Food *foods, struct Card *card, int selected_line, int card_length, int el, int desk_id) {
+static void sync_card(struct Food *foods, struct Card *card, int selected_line, int card_length, int el, int desk_id,
+                      struct Category *categories) {
     printw("Sepetinizin içeriği, onaylıyor musunuz?\n");
     printw("=============================================\n");
     int plussing = 0;
-    printw("%4s %30s\t%4s\n", "Adet", "Adı", "Fiyat");
+    printw("%4s\t%20s\t%13s\n", "Adet", "Adı", "Fiyat");
     for (int i = 0; i < 20; i++) {
         struct Card food = card[i];
         if (food.defined != 1) {
             break;
         }
-        printw("%4d %30s\t%4d\n", food.quantity, food.name, food.price);
-        plussing += food.price;
+        printw("%4d\t%25s\t %4d\n", food.quantity, food.name, food.price);
+        plussing += food.price * food.quantity;
     }
     printw("=============================================\n");
     printw("TUTAR: %d TL\n", plussing);
@@ -142,7 +174,7 @@ static void sync_card(struct Food *foods, struct Card *card, int selected_line, 
             printw("Siparişiniz başarıyla alınmıştır. Lütfen siparişinizi bekleyiniz.\n");
             return;
         } else if (keyboard == 104) { // h
-            draw_menu(foods, card, selected_line, card_length, el, desk_id);
+            draw_menu(foods, card, selected_line, card_length, el, desk_id, categories);
             break;
         }
     }
@@ -177,45 +209,39 @@ struct Tuple update_card(struct Card *card, int card_length, int m_food_id, int 
     return r;
 }
 
-static void draw_menu(struct Food *foods, struct Card *card, int line, int card_length, int el, int desk_id) {
-    int keyboard = 0;
+static void draw_menu(struct Food *foods, struct Card *card, int line, int card_length, int el, int desk_id,
+                      struct Category *categories) {
+    int keyboard;
 
-
-    /* init_pair(1, COLOR_RED, COLOR_GREEN);
-   setlocale(LC_ALL, "tr-TR");
-    start_color();
-
-    init_pair(1, COLOR_RED, COLOR_GREEN);
-    attron(COLOR_PAIR(1));
-    printw("Red text + Green back\n");
-    attroff(COLOR_PAIR(1));
-
-    init_pair(2, COLOR_GREEN, COLOR_WHITE); // changed id of pair
-    attron(COLOR_PAIR(2));
-    printw("Green text + white back\n");
-    attroff(COLOR_PAIR(2));
-
-    refresh();*/
     while (1) {
+        int category_status = 0;
+        int title = 0;
         clear_screen();
-        printw("%d\n", keyboard);
         // Draw header
         printw("Menüde İstediğiniz Yemeği Seçiniz.\n");
         printw("Sepetinizde Bulunan Ürün Sayısı: ");
         attron(COLOR_PAIR(2));
-        printw("%d", card_length);
+        printw(" %d ", card_length);
         attroff(COLOR_PAIR(2));
         printw("\n");
 
         // Draw foods
         printw("================================================================\n");
-        printw("%4s\t%4s\t%5s\t%4s\n", "id", "Kategori", "Adı", "Fiyatı");
+        printw("%10s\t%10s\t%7s\t%20s\n", "id", "Kategori", "Adı", "Fiyatı");
         for (int i = 0; i < el; i++) {
             struct Food food = foods[i];
+            if (category_status != food.category) {
+                attron(COLOR_PAIR(3));
+                printw("\n================================================================\n");
+                printw("%40s\n", categories[food.category].text);
+                printw("================================================================\n\n");
+                category_status = food.category;
+                attroff(COLOR_PAIR(3));
+            }
             if (line == i) {
                 attron(COLOR_PAIR(1));
             }
-            printw("%4d\t%4d\t%15s\t%4d\n", food.id, food.category, food.name, food.price);
+            printw("%10d\t%5d\t%20s\t%10d\n", food.id, food.category, food.name, food.price);
             if (line == i) {
                 attroff(COLOR_PAIR(1));
             }
@@ -252,7 +278,7 @@ static void draw_menu(struct Food *foods, struct Card *card, int line, int card_
                 break;
             case 101: // "e"
                 clear_screen();
-                sync_card(foods, card, line, card_length, el, desk_id);
+                sync_card(foods, card, line, card_length, el, desk_id, categories);
                 keyboard = 0;
                 return;
             default:

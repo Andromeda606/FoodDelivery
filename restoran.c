@@ -3,7 +3,7 @@
 #include <locale.h>
 
 int main() {
-    setlocale(LC_ALL, "Turkish");
+    setlocale(LC_ALL, "");
     printf("Restoran Giriş Sistemi\n");
     init();
     //Buradan itibaren yazılacak
