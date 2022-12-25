@@ -42,7 +42,7 @@ add_executable(
         include/database.c
         include/helper.c
         include/app/menu.c
-        include/app/mode.c include/app/mode.h)
+)
 
 
 target_link_libraries(LibraryTest sqlite3)

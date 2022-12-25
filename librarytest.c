@@ -23,6 +23,6 @@ int main() {
     //printf("\n");
 
     //printf("Adasd: %d\n", getcha());
-    //show_menu(4);
+    show_menu(4);
     system("PAUSE");
 }
