@@ -6,6 +6,7 @@
 #define RESTORANTAKIP_DATABASE_H
 #define TEST            1
 #define MAX_FOOD_LENGTH 20
+
 #include "struct.h"
 
 
@@ -52,8 +53,12 @@ void show_menu(int desk_id);
 
 void buy_products(int desk_id, struct Card *cards);
 
-/*
- * Geliştirme İçin hazırlanan kodlar
- */
+void show_orders(int current_line);
+
+void update_status(int desk_id, int status);
+
+int check_status();
+
+void end();
 
 #endif

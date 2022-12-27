@@ -4,6 +4,7 @@
 #include "database.h"
 #include <helper.h>
 #include "menu.h"
+#include "orders.h"
 #include <ncurses.h>
 #include <string.h>
 #include <locale.h>
@@ -16,8 +17,10 @@ void init() {
     char path[20] = "restoran.db";
     if (TEST) {
         strcpy(path, "../restoran.db");
+        printf("Bağlantı sağlandı\n");
     }
     sqlite3_open_v2(path, &db, SQLITE_OPEN_READWRITE, NULL);
+    sqlite3_busy_timeout(db,100);
 }
 
 //DESK ALGORITHM
@@ -117,7 +120,10 @@ void buy_products(int desk_id, struct Card *cards) {
         strcat(sql, buffer);
 
     }
-    sqlite3_exec(db, sql, 0, 0, 0);
+    int rc = sqlite3_exec(db, sql, 0, 0, 0);
+    if(rc != SQLITE_OK){
+        fprintf(stderr, "Failed to execute statement: %s\n", sqlite3_errmsg(db));
+    }
     clear_screen();
     endwin();
 }
@@ -146,6 +152,58 @@ int get_desk_status(int desk_id) {
         desks[i] = desk;
     }
     return desks;*/
+}
+
+void show_orders(int current_line) {
+    struct Order orders[20];
+    sqlite3_prepare_v2(db, "SELECT desk_id,status FROM desk_data WHERE status < 3 GROUP BY desk_id LIMIT 20;", -1, &res, 0);
+
+    int i;
+    for (i = 0; sqlite3_step(res) != SQLITE_DONE; i++) {
+        struct Order order;
+        order.desk_id = sqlite3_column_int(res, 0);
+        order.status = sqlite3_column_int(res, 1);
+        orders[i] = order;
+    }
+
+    initscr();
+    noecho();
+
+    start_color();
+
+    init_pair(1, COLOR_GREEN, COLOR_BLACK);
+    init_pair(2, COLOR_CYAN, COLOR_BLACK);
+    init_pair(3, COLOR_CYAN, COLOR_BLACK);
+    draw_orders(orders, i, current_line);
+}
+
+
+void update_status(int desk_id, int status) {
+    char sql[100];
+    sprintf(sql, "UPDATE desk_data SET status = %d WHERE desk_id = %d;", status, desk_id);
+    //printf("%s",sql);
+    sqlite3_exec(db, sql, 0, 0, 0);
+}
+
+
+
+int check_status(){
+    char *sql = "SELECT desk_id FROM desk_data WHERE status = 0 LIMIT 1;";
+    int rc = sqlite3_prepare_v2(db, sql, -1, &res, 0);
+
+    sqlite3_step(res);
+    if(rc == SQLITE_OK){
+        return sqlite3_column_int(res, 0);
+    }else{
+        fprintf(stderr, "Failed to execute statement: %s\n", sqlite3_errmsg(db));
+        return -1;
+    }
+
+}
+
+void end(){
+    sqlite3_finalize(res);
+    sqlite3_close_v2(db);
 }
 
 /*

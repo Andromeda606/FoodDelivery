@@ -7,6 +7,7 @@
 struct Food;
 struct Card;
 struct Category;
+struct Order;
 
 typedef struct Food {
     int id, category, price, defined;
@@ -28,5 +29,9 @@ typedef struct DeskData {
     int status, type_id, quantity, defined;
     char name[20];
 } DeskData;
+
+typedef struct Order {
+    int status, desk_id;
+} Order;
 
 #endif //LIBRARYTEST_STRUCT_C

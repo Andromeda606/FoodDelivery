@@ -12,7 +12,6 @@ int main() {
     }else{
         printf("Giriş başarısız\n");
     }
-    //get_desks();
-    print_desk("1");
+    show_orders(0);
     return 0;
 }

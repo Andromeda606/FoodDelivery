@@ -14,6 +14,7 @@
 
 ### Durum Kodları
 ```
+-1 = Sipariş onaylanmadı.
 0 = Sipariş verildi, onay bekleniliyor
 1 = Sipariş onaylandı, hazırlanıyor
 2 = Sipariş hazırlandı, getiriliyor
