@@ -67,7 +67,6 @@ int main() {
         start_color();
         init_pair(1, COLOR_CYAN, COLOR_BLACK);
         //noecho();
-
         int status = draw_yes_no(desk_id);
 
         endwin();

@@ -56,15 +56,11 @@ void draw_orders(struct Order orders[20], int length, int current_line) {
         // Draw footer
         printw("Çıkış yapmak için \"");
         attron(COLOR_PAIR(3));
-        printw("e");
+        printw("h");
         attroff(COLOR_PAIR(3));
-        printw("\"\nürün seçmek için \"");
+        printw("\"\nDurum seçmek için \"");
         attron(COLOR_PAIR(3));
         printw(">");
-        attroff(COLOR_PAIR(3));
-        printw("\"\nÜrün silmek için \"");
-        attron(COLOR_PAIR(3));
-        printw("<");
         attroff(COLOR_PAIR(3));
         printw("\" tuşuna basınız.\n");
         // Keyboard Control
@@ -82,14 +78,13 @@ void draw_orders(struct Order orders[20], int length, int current_line) {
                 }
                 break;
             case 67: // >
+                //printw("\nBağlantı yapılacak\n");
                 update_status(orders[current_line].desk_id, orders[current_line].status + 1);
                 show_orders(current_line);
-                break;
-            case 101: // "e"
-                /*clear_screen();
-                sync_card(foods, card, line, card_length, el, desk_id, categories);
-                keyboard = 0;*/
-                break;
+                return;
+            case 104: // h
+                clear_screen();
+                return;
             default:
                 break;
         }

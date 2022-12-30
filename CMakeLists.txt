@@ -14,20 +14,30 @@ find_library (libsqlite3.so SHARED)
 add_executable(
         Restoran
         restoran.c
-        include/callback.c
         include/callback.h
         include/database.h
+        include/helper.h
+        include/struct.h
+        include/app/menu.h
+        include/callback.c
         include/database.c
-        include/helper.c)
+        include/helper.c
+        include/app/menu.c
+        include/app/orders.c)
 
 add_executable(
         Musteri
         musteri.c
-        include/callback.c
         include/callback.h
         include/database.h
+        include/helper.h
+        include/struct.h
+        include/app/menu.h
+        include/callback.c
         include/database.c
-        include/helper.c)
+        include/helper.c
+        include/app/menu.c
+        include/app/orders.c)
 
 add_executable(
         LibraryTest

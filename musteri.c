@@ -1,83 +1,55 @@
 #include "database.h"
+#include "helper.h"
 #include <stdio.h>
 #include <locale.h>
+#include <unistd.h>
+
+void show_menu_data(int desk_id){
+    show_menu(desk_id);
+
+    setvbuf(stdout, NULL, _IOLBF, 0);
+    setvbuf(stderr, NULL, _IONBF, 0);
+   //end();
+    while(1){
+        sleep(9);
+        clear_screen();
+        init();
+        int desk_status = get_desk_status(desk_id);
+        end();
+        switch (desk_status) {
+            case -1:
+                printf("Sipariş Daha Onaylanmadı...\n");
+                continue;
+            case 1:
+                printf("Sipariş Onaylandı, hazırlanıyor..\n");
+                continue;
+            case 2:
+                printf("Sipariş Hazırlandı, Getiriliyor..\n");
+                continue;
+            case 3:
+                printf("Sipariş Getirildi, Afiyet olsun.\n");
+                return;
+        }
+    }
+}
+void show_menu_data(int desk_id);
+
 
 int main(){
-    setlocale(LC_ALL, "Turkish");
+    setlocale(LC_ALL, "");
+    init();
     int masa;
     printf("Restoranımıza Hoş Geldiniz \n \n");
     printf("Şuanda 1,4 ve 7 numaralı masalarımız boştadır. \n \n");
 
-    do {
-        printf("\nLütfen Oturmak Istediginiz Masa Numarasini Giriniz:  ");
-        scanf("%d", &masa);
-        if (masa != 1 && masa != 4 && masa != 7) {
-            printf("\nYanlış veya dolu masa tercihi yaptınız. Lütfen tekrar deneyin.\n");
-        }
-    } while (masa != 1 && masa != 4 && masa != 7);
+    printf("\nLütfen Oturmak Istediginiz Masa Numarasini Giriniz:  ");
+    scanf("%d", &masa);
     printf("\n%d numaralı masaya oturuyorsunuz.\n", masa);
+    sleep(1);
 
-    printf(" \nMenumuzde Bulunan Ana Yemekler; \n \n");
-    printf("********Ana Yemekler******** \n \n");
-    printf("Lahmacun --- Kıymalı Pide --- İskender\n");
-
-    int anayemek;
-    printf("\nLütfen Sipariş Etmek İstediğiniz Yemeği Seçiniz\n");
-    printf("1. Lahmacun (15 TL)\n");
-    printf("2. Kıymalı Pide (38 TL)\n");
-    printf("3. İskender (45 TL)\n");
-    printf("Seçtiğiniz Yemek: ");
-    scanf("%d", &anayemek);
-
-    int fiyat = 0;
-    if (anayemek == 1) {
-        fiyat = 15;
-        printf("Seçtiğiniz Yemek: Lahmacun\n");
-    }
-    else if (anayemek == 2) {
-        fiyat = 38;
-        printf("Seçtiğiniz Yemek: Kıymalı Pide\n");
-    }
-    else if (anayemek == 3) {
-        fiyat = 45;
-        printf("Seçtiğiniz Yemek: İskender\n");
-    }
-
-    printf("Toplam tutar: %d TL\n", fiyat);
-
-    char onay;
-    int yontem;
-    int kredikarti1;
-    int kredikarti2;
-    int kredikarti3;
-    printf("Siparişinizi onaylıyor musunuz? (E veya H) ");
-    scanf(" %c", &onay);
-    if (onay == 'E' || onay == 'e') {
-        printf("Sipariş onaylandı.\n");
-        printf("Lütfen ödeme yöntemini seçin:\n");
-        printf("1. Nakit\n");
-        printf("2. Kredi Kartı\n");
-        scanf("%d", &yontem);
-        if(yontem == 1) {
-        	printf("Ödeme Yöntemi Kabul Edildi.");
-            printf("Garson Siparişinizi Birazdan Getirecek.");
-        }
-        else if (yontem == 2) {
-        	printf("Lütfen Kredi Kartı Bilgilerini Giriniz.\n");
-        	printf("Kredi Kartınızın 16 Hanesini Giriniz: ");
-        	scanf("%d", &kredikarti1);
-        	printf("Kredi Kartınızın Son Kullanım Tarihini Yazınız: (10/25 Şeklinde)");
-        	scanf("%d", &kredikarti2);
-        	printf("Kredi Kartınızın Arka Kısmında Bulunan CVV Kodunu Yazınız: ");
-        	scanf("%d", &kredikarti3);
-        	printf("Ödeme Yöntemi Kabul Edildi.\n");
-        	printf("Garson Siparişinizi Birazdan Getirecek.");
-            printf("denemedenemedeneme")
-		}
-    } else {
-        printf("Sipariş iptal edildi.\n");
-    }
+    show_menu_data(masa);
 
 
     return 0;
 }
+
