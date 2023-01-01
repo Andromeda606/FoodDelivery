@@ -29,7 +29,7 @@ int main() {
         initscr();
         printw("Siparişlere erişmek için 1 e bas.\n");
         int keyboard = getcha();
-        if(keyboard == 49){
+        if(keyboard == 49){ // 1
             show_orders(0);
         }
     }

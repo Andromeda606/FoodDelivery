@@ -40,9 +40,9 @@ int main(){
     init();
     int masa;
     printf("Restoranımıza Hoş Geldiniz \n \n");
-    printf("Şuanda 1,4 ve 7 numaralı masalarımız boştadır. \n \n");
+    //printf("Şuanda 1,4 ve 7 numaralı masalarımız boştadır. \n \n");
 
-    printf("\nLütfen Oturmak Istediginiz Masa Numarasini Giriniz:  ");
+    printf("Lütfen Oturmak Istediginiz Masa Numarasini Giriniz:  ");
     scanf("%d", &masa);
     printf("\n%d numaralı masaya oturuyorsunuz.\n", masa);
     sleep(1);

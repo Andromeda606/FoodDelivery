@@ -6,6 +6,6 @@
 #define LIBRARYTEST_MENU_H
 #include "struct.h"
 
-void draw_menu(struct Food *foods, struct Card *card, int line, int card_length, int el, int desk_id, struct Category *categories); // Menüyü çizer.
+void draw_menu(struct Food *foods, struct Card card[50], int line, int card_length, int el, int desk_id, struct Category *categories); // Menüyü çizer.
 
 #endif //LIBRARYTEST_MENU_H
