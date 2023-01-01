@@ -3,6 +3,8 @@
 ## Nedir
 Bu programın amacı ürün takibi yapma ve masaları yönetmeyi sağlar. İstediğiniz masayı yönetebilir ve masalar arasında ücret kontrolü yapmaya yarar.
 
+## Video
+[![](https://img.youtube.com/vi/jNWSrtuBlNQ/maxresdefault.jpg)](https://youtu.be/jNWSrtuBlNQ)
 ## Kurulum
 ### Ubuntu
 ````shell
