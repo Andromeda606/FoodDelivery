@@ -1,0 +1,1 @@
+Burası resimlerin olduğu dosya.
