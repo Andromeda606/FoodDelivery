@@ -8,10 +8,10 @@
   </p>
 
 
-## Nedir
-Bu programın amacı sipariş verme, siparişleri yönetme özellikleri sağlar. İstediğiniz masayı yönetebilir ve masalar arasında durum değişimi (hazırlandı, gönderiliyor) yapabilirsiniz.
+## What
+The purpose of this program is to provide features for ordering, managing orders. You can manage any table and change status (provisioned, sending) between tables.
 
-## Kurulum
+## Setup
 ### Ubuntu
 ````shell
 sudo apt update
