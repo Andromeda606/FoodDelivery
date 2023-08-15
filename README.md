@@ -1,4 +1,4 @@
-<p align="center">Restoran Yemek Sipariş Verme / Yönetme Yazılımı</p>
+<p align="center">Restaurant Food Ordering/Management Software</p>
 
   <img src="https://github.com/Andromeda606/RestoranTakip/blob/master/images/image3.png" width="400"  align="right">
   <br>
